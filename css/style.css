@@ -1,1 +1,24 @@
+* {
+    margin: 25px;
+}
 
+h1 {
+    text-align: center;
+    font-size: 30px;
+}
+
+.flexBtn {
+    display: flex;
+}
+
+.btn {
+    display: block;
+    border: 1px solid skyblue;
+    border-radius: 50%;
+    padding: 20px 50px;
+    background-color: green;
+}
+
+.btn:hover {
+    background-color: orange;
+}
