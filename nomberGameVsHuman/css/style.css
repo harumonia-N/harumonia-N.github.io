@@ -57,6 +57,7 @@ input {
 }
 
 button {
+    text-aline: center;
     width: 40%;
     margin: 2%;
     padding: 2%;
