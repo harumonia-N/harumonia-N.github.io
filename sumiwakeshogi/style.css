@@ -1,0 +1,76 @@
+:root {
+  --ink: #24201b;
+  --paper: #fbf5e9;
+  --wood: #d7a45f;
+  --wood-dark: #855328;
+  --sente: #9d342b;
+  --gote: #28577d;
+  --accent: #e6b84e;
+  --line: rgba(61, 37, 18, .55);
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-width: 320px;
+  color: var(--ink);
+  font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", system-ui, sans-serif;
+  background: radial-gradient(circle at top, #fffdf7 0, var(--paper) 55%, #ecd7b3 100%);
+}
+button { font: inherit; }
+.game-shell { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 42px; }
+.page-header { text-align: center; margin-bottom: 24px; }
+.page-header h1 { margin: 2px 0 6px; font-size: clamp(2rem, 5vw, 3.3rem); letter-spacing: .12em; }
+.page-header p { margin: 0; color: #665b4c; }
+.eyebrow { font-size: .76rem; letter-spacing: .2em; font-weight: 700; }
+
+.game-layout { display: grid; grid-template-columns: minmax(190px, 1fr) minmax(390px, 620px) minmax(190px, 1fr); gap: 22px; align-items: start; }
+.player-panel, .turn-card { background: rgba(255,255,255,.66); border: 1px solid rgba(102,72,38,.2); border-radius: 14px; box-shadow: 0 8px 22px rgba(75,45,16,.1); }
+.player-panel { padding: 16px; }
+.player-panel h2 { margin: 0 0 4px; font-size: 1.25rem; }
+.player-panel .sub { margin: 0 0 14px; color: #766857; font-size: .85rem; }
+.penalty { display: flex; align-items: center; justify-content: space-between; padding: 10px 0 14px; border-bottom: 1px solid rgba(102,72,38,.18); font-weight: 700; }
+.penalty-dots { color: #a82d2d; font-size: 1.35rem; letter-spacing: .08em; }
+.piece-list { display: grid; gap: 7px; margin-top: 14px; }
+.piece-choice { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 7px 8px; border: 1px solid #cbb895; border-radius: 8px; background: #fffdf8; color: var(--ink); cursor: pointer; transition: transform .15s, background .15s; }
+.piece-choice:hover:not(:disabled) { transform: translateX(2px); background: #fff0c7; }
+.piece-choice.selected { outline: 3px solid var(--accent); background: #fff1ca; }
+.piece-choice:disabled { opacity: .52; cursor: not-allowed; }
+.piece-choice .mini-piece { width: 31px; height: 37px; font-size: 1rem; }
+.piece-count { min-width: 25px; text-align: right; font-weight: 800; }
+
+.board-area { text-align: center; }
+.turn-card { margin-bottom: 15px; padding: 12px 16px; }
+.turn-card p, .turn-card h2 { margin: 0; }
+#phase-label { color: #857052; font-size: .78rem; font-weight: 700; letter-spacing: .13em; }
+#turn-label { margin: 3px 0 !important; font-size: 1.45rem; }
+#selected-label { font-size: .92rem; font-weight: 700; }
+.message { min-height: 1.45em; margin-top: 7px !important; color: #7b5730; font-size: .84rem; }
+.board-wrap { width: 100%; padding: 8px; background: #5c3519; border-radius: 7px; box-shadow: 0 10px 20px rgba(53,29,10,.22); }
+.board { display: grid; grid-template-columns: repeat(9, 1fr); border-top: 1px solid var(--line); border-left: 1px solid var(--line); background: var(--wood); }
+.square { position: relative; aspect-ratio: 1; display: grid; place-items: center; padding: 2px; border: 0; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: transparent; cursor: pointer; }
+.square:hover:not(:disabled) { background: rgba(255, 245, 180, .48); }
+.square.legal::after { content: ""; position: absolute; width: 18%; aspect-ratio: 1; border-radius: 50%; background: rgba(40, 110, 61, .52); }
+.square.legal .piece { position: relative; z-index: 1; }
+.square:disabled { cursor: default; }
+.piece, .mini-piece { display: grid; place-items: center; color: #1e1a14; font-family: "Yu Mincho", "Hiragino Mincho ProN", serif; font-weight: 800; line-height: 1; clip-path: polygon(50% 0, 94% 20%, 86% 100%, 14% 100%, 6% 20%); background: #f6df9c; border: 1px solid #61431f; box-shadow: 0 1px 1px rgba(0,0,0,.18); }
+.piece { width: 78%; height: 84%; font-size: clamp(.82rem, 2.65vw, 1.65rem); padding-top: 8%; }
+.gote { transform: rotate(180deg); color: #152b42; background: #d9e8eb; }
+.reset-button { margin-top: 17px; padding: 11px 22px; border: 0; border-radius: 999px; background: #3e3024; color: white; font-weight: 700; cursor: pointer; box-shadow: 0 4px 0 #21170e; }
+.reset-button:active { transform: translateY(3px); box-shadow: 0 1px 0 #21170e; }
+
+@media (max-width: 900px) {
+  .game-layout { grid-template-columns: 1fr 1fr; }
+  .board-area { grid-column: 1 / -1; grid-row: 1; width: min(620px, 100%); justify-self: center; }
+  .sente-panel { grid-column: 1; grid-row: 2; }
+  .gote-panel { grid-column: 2; grid-row: 2; }
+}
+@media (max-width: 550px) {
+  .game-shell { width: min(100% - 18px, 620px); padding-top: 16px; }
+  .game-layout { gap: 12px; }
+  .player-panel { padding: 10px; }
+  .piece-list { grid-template-columns: repeat(2, 1fr); gap: 5px; }
+  .piece-choice { padding: 4px; font-size: .8rem; }
+  .piece-choice .mini-piece { display: none; }
+  .penalty { padding: 6px 0 9px; }
+}

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>すみわけ将棋</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="game-shell">
+    <header class="page-header">
+      <p class="eyebrow">SHOGI TERRITORY GAME</p>
+      <h1>すみわけ将棋</h1>
+      <p>互いの利きを避け、最後まで駒を置き切ろう。</p>
+    </header>
+
+    <section class="game-layout" aria-label="すみわけ将棋のゲーム画面">
+      <aside class="player-panel sente-panel" id="sente-panel"></aside>
+
+      <section class="board-area">
+        <div class="turn-card" aria-live="polite">
+          <p id="phase-label">通常戦</p>
+          <h2 id="turn-label">先手の番</h2>
+          <p id="selected-label">選択中：飛車</p>
+          <p id="message" class="message">駒を選んで、盤上の空きマスをクリックしてください。</p>
+        </div>
+        <div class="board-wrap">
+          <div id="board" class="board" role="grid" aria-label="9×9の将棋盤"></div>
+        </div>
+        <button id="reset-button" class="reset-button" type="button">最初からやり直す</button>
+      </section>
+
+      <aside class="player-panel gote-panel" id="gote-panel"></aside>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+body {
+
+    font-family: sans-serif;
+    margin: 0;
+    padding: 2%;
+    box-sizing: border-box;
+
+}
+
+
+h2 {
+
+    text-align: center;
+
+}
+
+
+/* カードエリア */
+
+#cards {
+
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+}
+
+
+/* カードボタン */
+
+#cards button {
+
+    width: 18%;
+    margin: 1%;
+    padding: 3% 0;
+
+    font-size: 2vw;
+
+}
+
+
+/* 操作ボタン */
+
+button {
+
+    width: 40%;
+    margin: 2%;
+    padding: 2%;
+
+    font-size: 2vw;
+
+}
+
+
+/* ログ */
+
+#log {
+
+    width: 100%;
+    height: 30vh;
+
+    border: 1px solid black;
+
+    overflow-y: scroll;
+
+    white-space: pre-line;
+
+    font-size: 1.5vw;
+
+    padding: 2%;
+
+}
+
+
+/* タブレット */
+
+@media (max-width: 800px) {
+
+    #cards button {
+
+        width: 28%;
+        font-size: 3vw;
+
+    }
+
+    button {
+
+        width: 45%;
+        font-size: 3vw;
+
+    }
+
+    #log {
+
+        font-size: 2.5vw;
+
+    }
+
+}
+
+
+/* スマホ */
+
+@media (max-width: 500px) {
+
+    #cards button {
+
+        width: 40%;
+        font-size: 5vw;
+
+    }
+
+    button {
+
+        width: 90%;
+        font-size: 5vw;
+
+    }
+
+    #log {
+
+        font-size: 4vw;
+
+    }
+
+}

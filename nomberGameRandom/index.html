@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="description" content="僕がPythonで作ったコードをChatGPTに変換してもらいました。簡単な数字比較ゲームです。相手はランダムです。">
+<title>数字カードゲーム</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<h2>数字の大小ゲーム</h2>
+
+<div id="cards"></div>
+
+<button onclick="endGame()">途中終了</button>
+<button onclick="restart()">リスタート</button>
+
+<h3>ログ</h3>
+<div id="log"></div>
+
+<script>
+
+    let card;
+    let com_card;
+
+    let ply_point;
+    let com_point;
+
+    let continue_game;
+
+
+    function init(){
+
+        card = [];
+        com_card = [];
+        for(let i = 0;i < 10;i++){
+            plyNum = Math.floor(Math.random() * 100) + 1;
+            comNum = Math.floor(Math.random() * 100) + 1;
+
+            card.push(plyNum);
+            com_card.push(comNum);
+        }
+
+        card.sort((a, b) => a - b);
+
+        ply_point = 0;
+        com_point = 0;
+
+        continue_game = true;
+
+        document.getElementById("log").innerHTML = "";
+
+        showCards();
+
+    }
+    function log(text){
+        document.getElementById("log").innerHTML += text + "\n";
+    }
+
+
+    function showCards(){
+        let div = document.getElementById("cards");
+
+        div.innerHTML = "";
+        card.forEach(num => {
+
+        let btn = document.createElement("button");
+
+        btn.textContent = num;
+
+        btn.onclick = () => play(num);
+
+        div.appendChild(btn);
+
+        });
+    }
+
+
+    function play(plyH){
+
+        if(!continue_game) return;
+
+        let comIndex = Math.floor(Math.random() * com_card.length);
+        let comH = com_card[comIndex];
+
+        log("プレイヤー：" + plyH + " / コンピュータ：" + comH);
+        if(comH < plyH){
+            log("プレイヤー勝ち +" + (plyH - comH));
+
+            ply_point += (plyH - comH);
+
+        }
+        else if(comH > plyH){
+            log("コンピュータ勝ち +" + (comH - plyH));
+            com_point += (comH - plyH);
+        }
+        else{
+            log("同じ → 流れ");
+
+        }
+        card = card.filter(x => x !== plyH);
+        com_card = com_card.filter(x => x !== comH);
+
+        showCards();
+
+        if(card.length === 0){
+
+            finish();
+
+        }
+
+    }
+
+
+    function finish(){
+
+        continue_game = false;
+
+        let result =
+            "終了\n\n" +
+            "プレイヤー：" + ply_point + "\n" +
+            "コンピュータ：" + com_point + "\n\n";
+
+        if(ply_point > com_point){
+
+        result += "プレイヤーの勝ち";
+
+    } else if(ply_point < com_point){
+        result += "コンピュータの勝ち";
+
+    } else{
+        result += "引き分け";
+
+    }
+
+    alert(result);
+
+    }
+
+
+    function endGame(){
+        finish();
+
+    }
+
+
+    function restart(){
+        init();
+
+    }
+
+
+    init();
+
+</script>
+
+</body>
+</html>
