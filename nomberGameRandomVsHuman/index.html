@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数字カード対戦ゲーム</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main class="game-shell">
+    <header>
+      <p class="eyebrow">OFFLINE CARD BATTLE</p>
+      <h1>数字カード対戦ゲーム</h1>
+      <a href="ranking.html">週間ランキングを見る</a>
+    </header>
+
+    <section id="setup-screen" class="screen">
+      <h2>プレイヤー名を入力</h2>
+      <p>同じ端末を交代で使う、2人用のゲームです。</p>
+      <div class="name-fields">
+        <label>プレイヤー1<input id="player1-name" type="text" maxlength="12" placeholder="プレイヤー1"></label>
+        <label>プレイヤー2<input id="player2-name" type="text" maxlength="12" placeholder="プレイヤー2"></label>
+      </div>
+      <button class="primary" id="start-button">名前を確定して開始</button>
+    </section>
+
+    <section id="pass-screen" class="screen hidden">
+      <p class="round-label" id="round-label"></p>
+      <h2 id="pass-title"></h2>
+      <p>相手に見られないように、このボタンを押してからカードを選んでください。</p>
+      <button class="primary" id="pass-button"></button>
+    </section>
+
+    <section id="countdown-screen" class="screen hidden" aria-live="assertive">
+      <p>まもなくカード選択です</p>
+      <div id="countdown">3</div>
+    </section>
+
+    <section id="choice-screen" class="screen hidden">
+      <div class="status-row">
+        <p id="turn-label"></p>
+        <p id="score-label"></p>
+      </div>
+      <h2>数字を1枚選んでください</h2>
+      <p id="choice-help">選択後に確定してください。</p>
+      <div id="cards" class="cards"></div>
+      <p id="selected-card" class="selected-card">まだ選ばれていません</p>
+      <button class="primary" id="confirm-button" disabled>この数字で確定</button>
+    </section>
+
+    <section id="result-screen" class="screen hidden">
+      <p class="round-label" id="result-round"></p>
+      <h2 id="result-title"></h2>
+      <div class="versus"><span id="result-p1"></span><b>VS</b><span id="result-p2"></span></div>
+      <p id="result-message"></p>
+      <button class="primary" id="next-round-button">次のラウンドへ</button>
+    </section>
+
+    <section id="finish-screen" class="screen hidden">
+      <h2>ゲーム終了！</h2>
+      <div id="final-score" class="final-score"></div>
+      <p id="winner-message"></p>
+      <button class="primary" id="restart-button">もう一度遊ぶ</button>
+      <a class="secondary-link" href="ranking.html">週間ランキングを見る</a>
+    </section>
+  </main>
+  <script>
+    const player1Cards = [];
+    const player2Cards = [];
+    let players, cards, points, selections, turn, round, selected;
+    const screens = document.querySelectorAll('.screen');
+    const $ = id => document.getElementById(id);
+    
+    function show(id) { screens.forEach(s => s.classList.toggle('hidden', s.id !== id)); }
+    function resetGame() {
+      for(let i = 0; i < 10; i++) {
+        player1Cards.push(Math.floor(Math.random() * 100) + 1);
+        player2Cards.push(Math.floor(Math.random() * 100) + 1);
+      }
+      player1Cards.sort((a, b) => a - b);
+      player2Cards.sort((a, b) => a - b);
+      
+      players = ['', '']; 
+      cards = [[], []]; 
+      points = [0, 0]; 
+      selections = [null, null]; 
+      turn = 0; round = 1; 
+      selected = null;
+      show('setup-screen');
+    }
+    function startGame() {
+      players = [$('player1-name').value.trim() || 'プレイヤー1', $('player2-name').value.trim() || 'プレイヤー2'];
+      cards = [player1Cards,player2Cards]; 
+      points = [0, 0]; 
+      selections = [null, null]; 
+      turn = 0; round = 1;
+      showPassScreen();
+    }
+    function showPassScreen() {
+      $('round-label').textContent = `第${round}ラウンド`;
+      $('pass-title').textContent = `${players[turn]}の番です`;
+      $('pass-button').textContent = `${players[turn]}なら、ここを押してください`;
+      show('pass-screen');
+    }
+    function startCountdown() {
+      show('countdown-screen'); 
+      let n = 3; $('countdown').textContent = n;
+      const timer = setInterval(() => { n--; $('countdown').textContent = n; if (n === 0) { clearInterval(timer); setTimeout(showChoiceScreen, 500); } }, 800);
+    }
+    function showChoiceScreen() {
+      selected = null; 
+      $('confirm-button').disabled = true;
+      $('turn-label').textContent = `${players[turn]}：カードを選択`;
+      $('score-label').textContent = `${players[0]} ${points[0]}点　/　${players[1]} ${points[1]}点`;
+      $('selected-card').textContent = 'まだ選ばれていません';
+      const cardBox = $('cards'); cardBox.innerHTML = '';
+      cards[turn].forEach(n => { const b = document.createElement('button'); b.className = 'card'; b.textContent = n; b.onclick = () => chooseCard(n, b); cardBox.appendChild(b); });
+      show('choice-screen');
+    }
+    function chooseCard(number, button) {
+      selected = number; document.querySelectorAll('.card').forEach(b => b.classList.remove('chosen')); button.classList.add('chosen');
+      $('selected-card').textContent = `選んだ数字：${number}`; $('confirm-button').disabled = false;
+    }
+    function confirmChoice() {
+      if (selected === null) return;
+      selections[turn] = selected; cards[turn] = cards[turn].filter(n => n !== selected);
+      if (turn === 0) { turn = 1; showPassScreen(); } else { resolveRound(); }
+    }
+    function resolveRound() {
+      const [a, b] = selections;
+      let message;
+      if (a > b) { points[0] += a; message = `${players[0]}の勝ち！ ${a}点獲得`; }
+      else if (b > a) { points[1] += b; message = `${players[1]}の勝ち！ ${b}点獲得`; }
+      else message = '同じ数字です。今回は得点なし';
+      $('result-round').textContent = `第${round}ラウンドの結果`;
+      $('result-title').textContent = message;
+      $('result-p1').textContent = `${players[0]}：${a}`; $('result-p2').textContent = `${players[1]}：${b}`;
+      $('result-message').textContent = `現在の得点　${players[0]} ${points[0]}点　/　${players[1]} ${points[1]}点`;
+      $('next-round-button').textContent = round === 10 ? '最終結果を見る' : '次のラウンドへ'; show('result-screen');
+    }
+    function nextRound() {
+      if (round === 10) return finishGame();
+      round++; turn = 0; selections = [null, null]; showPassScreen();
+    }
+    function weekKey() {
+      const d = new Date(); const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); const day = date.getUTCDay() || 7;
+      date.setUTCDate(date.getUTCDate() - day + 1); return date.toISOString().slice(0, 10);
+    }
+    function saveRanking() {
+      const key = 'numberGameWeeklyRanking'; const all = JSON.parse(localStorage.getItem(key) || '{}'); const week = weekKey();
+      all[week] = all[week] || {}; players.forEach((name, i) => all[week][name] = (all[week][name] || 0) + points[i]);
+      localStorage.setItem(key, JSON.stringify(all));
+    }
+    function finishGame() {
+      saveRanking(); const winner = points[0] === points[1] ? '引き分け！' : `${points[0] > points[1] ? players[0] : players[1]}の勝ち！`;
+      $('final-score').innerHTML = `<p>${players[0]}<strong>${points[0]}点</strong></p><span>VS</span><p>${players[1]}<strong>${points[1]}点</strong></p>`;
+      $('winner-message').textContent = `${winner} 得点は週間ランキングに保存されました。`; show('finish-screen');
+    }
+    $('start-button').onclick = startGame; $('pass-button').onclick = startCountdown; $('confirm-button').onclick = confirmChoice; $('next-round-button').onclick = nextRound; $('restart-button').onclick = resetGame;
+    resetGame();
+  </script>
+</body>
+</html>
