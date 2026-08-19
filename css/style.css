@@ -9,10 +9,12 @@ h1 {
 
 .flexBtn {
     display: flex;
+    justify-content：space-around;
 }
 
 .btn {
-    display: block;
+    width: 180px;
+    height: 50px;
     border: 1px solid skyblue;
     border-radius: 50%;
     padding: 20px 50px;
