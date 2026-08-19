@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>週間ランキング | 数字カード対戦ゲーム</title><link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main class="game-shell ranking-shell">
+    <header><p class="eyebrow">WEEKLY RANKING</p><h1>週間ポイントランキング</h1><a href="index.html">ゲームに戻る</a></header>
+    <section class="screen"><h2 id="week-title"></h2><p>この端末で今週遊んだ合計得点です。</p><ol id="ranking-list" class="ranking-list"></ol><p id="empty-message" class="hidden">まだ記録がありません。ゲームを遊ぶとここに表示されます。</p><button id="clear-button" class="danger hidden">今週の記録を消去</button></section>
+  </main>
+  <script>
+    function weekKey() { const d = new Date(); const date = new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())); const day = date.getUTCDay() || 7; date.setUTCDate(date.getUTCDate()-day+1); return date.toISOString().slice(0,10); }
+    const key = 'numberGameWeeklyRanking', week = weekKey(), all = JSON.parse(localStorage.getItem(key) || '{}'), data = all[week] || {};
+    $('week-title').textContent = `${week} から始まる週`;
+    const entries = Object.entries(data).sort((a,b) => b[1]-a[1]);
+    if (entries.length) { $('ranking-list').innerHTML = entries.map(([name,score]) => `<li><span>${escapeHtml(name)}</span><strong>${score}点</strong></li>`).join(''); $('clear-button').classList.remove('hidden'); } else $('empty-message').classList.remove('hidden');
+    $('clear-button').onclick = () => { if(confirm('今週の記録を消去しますか？')) { delete all[week]; localStorage.setItem(key, JSON.stringify(all)); location.reload(); } };
+    function $(id) { return document.getElementById(id); } function escapeHtml(t) { const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
+  </script>
+</body>
+</html>
