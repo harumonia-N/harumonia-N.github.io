@@ -12,7 +12,7 @@ h1 {
     justify-content：space-around;
 }
 
-.btn {
+a {
     width: 180px;
     height: 50px;
     border: 5px solid skyblue;
