@@ -1,3 +1,4 @@
+
 * {
     margin: 25px;
 }
@@ -9,14 +10,32 @@ h1 {
 
 .flexBtn {
     display: flex;
-    justify-content：space-around;
+    justify-content: space-around;
 }
 
 a {
-    width: 180px;
-    height: 50px;
+    width: 100%;
+    max-width: 240px;
+    display: inline-block;
     border: 5px solid skyblue;
     border-radius: 5%;
     padding: 15px 10px;
-    text-align: center;    
+    text-align: center;
+    text-decoration: none;
+    background-color: #ffffe0;
+}
+
+a:hover {
+    background-color: #f0f8ff;
+}
+
+@media (max-width: 900px) {
+    .flexBtn {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    a {
+        max-width: 100%;
+    }
 }
